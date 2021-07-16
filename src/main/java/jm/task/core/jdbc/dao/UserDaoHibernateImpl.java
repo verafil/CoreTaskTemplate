@@ -4,15 +4,9 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
-public class UserDaoHibernateImpl extends Util implements UserDao {
-
-    private final Connection connection = getConnection();
+public class UserDaoHibernateImpl implements UserDao {
 
     public UserDaoHibernateImpl() {
 
@@ -28,47 +22,27 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
                 "\tage int not null,\n" +
                 "\tconstraint users_pk\n" +
                 "\t\tprimary key (id)\n" + ")";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Transaction transaction;
+        try (Session session = Util.getSessionFactory().openSession()){
+            transaction = session.beginTransaction();
+            session.createSQLQuery(sql).executeUpdate();
+            transaction.commit();
+        } catch (Exception s) {
             System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
-            try {
-                connection.rollback();
-            } catch (SQLException s) {
-                s.printStackTrace();
-            }
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
+
     }
 
     @Override
     public void dropUsersTable() {
         String sql = "drop table users";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Transaction transaction;
+        try (Session session = Util.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.createSQLQuery(sql).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
             System.err.println("Удаление не возможно. Таблица с таким наименованием не существует.");
-            try {
-                connection.rollback();
-            } catch (SQLException s) {
-                s.printStackTrace();
-            }
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
     }
 

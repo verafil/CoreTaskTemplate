@@ -2,8 +2,6 @@ package jm.task.core.jdbc;
 import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 
-import java.sql.SQLException;
-
 public class Main {
     public static void main(String[] args) {
         /*UserDaoJDBCImpl userDaoJDBC = new UserDaoJDBCImpl();
@@ -25,7 +23,7 @@ public class Main {
         userDaoHibernate.saveUser("Svetlana", "Ivanovna", (byte) 20);
         userDaoHibernate.saveUser("Igor", "Sergeevich", (byte) 28);
 
-        System.out.println(userDaoHibernate.getAllUsers());
+       System.out.println(userDaoHibernate.getAllUsers());
         userDaoHibernate.cleanUsersTable();
         userDaoHibernate.dropUsersTable();
     }
