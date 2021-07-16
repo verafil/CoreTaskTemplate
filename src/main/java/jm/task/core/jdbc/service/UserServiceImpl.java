@@ -6,7 +6,7 @@ import jm.task.core.jdbc.util.Util;
 
 import java.util.List;
 
-public class UserServiceImpl extends Util implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserDaoJDBCImpl userDaoJDBC = new UserDaoJDBCImpl();
 
