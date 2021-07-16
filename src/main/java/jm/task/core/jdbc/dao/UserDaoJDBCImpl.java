@@ -15,7 +15,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     }
 
-    public void createUsersTable() throws SQLException {
+    public void createUsersTable() {
         String sql = "create table users\n" +
                 "(\n" +
                 "\tid int auto_increment,\n" +
@@ -26,34 +26,36 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
                 "\t\tprimary key (id)\n" + ")";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            try {
-                preparedStatement.executeUpdate();
-                connection.commit();
-            } catch (SQLSyntaxErrorException s) {
-                System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
-            }
+            preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.rollback();
+            System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
+            try {
+                connection.rollback();
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 
-    public void dropUsersTable() throws SQLException {
+    public void dropUsersTable() {
         String sql = "drop table users";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            try {
-                preparedStatement.executeUpdate();
-                connection.commit();
-            } catch (SQLSyntaxErrorException s) {
-                System.err.println("Удаление не возможно. Таблица с таким наименованием не существует.");
-            }
+            preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.rollback();
+            System.err.println("Удаление не возможно. Таблица с таким наименованием не существует.");
+            try {
+                connection.rollback();
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
+    public void saveUser(String name, String lastName, byte age) {
 
         String sql = "insert into users (name, lastName, age) values(?,?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -66,11 +68,15 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.rollback();
+            try {
+                connection.rollback();
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 
-    public void removeUserById(long id) throws SQLException {
+    public void removeUserById(long id) {
 
         String sql = "delete from users where id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -80,7 +86,11 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.rollback();
+            try {
+                connection.rollback();
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 
@@ -106,15 +116,18 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         return list;
     }
 
-    public void cleanUsersTable() throws SQLException {
+    public void cleanUsersTable() {
         String sql = "delete from users";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.rollback();
-
+            try {
+                connection.rollback();
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
     }
 }
