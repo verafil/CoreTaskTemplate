@@ -13,6 +13,12 @@ public class Util {
     private static final String PASSWORD = "root";
 
     public Connection getConnection() {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+
         return connection;
     }
 

@@ -1,5 +1,7 @@
 package jm.task.core.jdbc;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {

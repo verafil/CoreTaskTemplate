@@ -28,8 +28,10 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try {
                 preparedStatement.executeUpdate();
+                connection.commit();
             } catch (SQLSyntaxErrorException s) {
                 System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
+                connection.rollback();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,8 +43,10 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try {
                 preparedStatement.executeUpdate();
+                connection.commit();
             } catch (SQLSyntaxErrorException s) {
                 System.err.println("Удаление не возможно. Таблица с таким наименованием не существует.");
+                connection.rollback();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,27 +54,49 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
         String sql = "insert into users (name, lastName, age) values(?,?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
-
+            connection.commit();
             System.out.println("User с именем – " + name + " добавлен в базу данных");
 
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 
     public void removeUserById(long id) {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
         String sql = "delete from users where id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+            connection.commit();
+
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 
@@ -79,6 +105,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         List<User> list = new LinkedList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery(sql);
+            connection.commit();
 
             while (resultSet.next()) {
                 User user = new User();
@@ -89,8 +116,8 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
                 list.add(user);
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return list;
     }
@@ -99,8 +126,15 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         String sql = "delete from users";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+
         }
     }
 }
