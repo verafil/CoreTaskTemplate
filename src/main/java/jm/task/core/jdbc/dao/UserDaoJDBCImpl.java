@@ -15,7 +15,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     }
 
-    public void createUsersTable() {
+    public void createUsersTable() throws SQLException {
         String sql = "create table users\n" +
                 "(\n" +
                 "\tid int auto_increment,\n" +
@@ -31,10 +31,10 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
                 connection.commit();
             } catch (SQLSyntaxErrorException s) {
                 System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
-                connection.rollback();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.rollback();
         }
     }
 
