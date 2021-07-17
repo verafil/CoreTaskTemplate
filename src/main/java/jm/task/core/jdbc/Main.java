@@ -1,5 +1,4 @@
 package jm.task.core.jdbc;
-import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 
 public class Main {
@@ -16,7 +15,7 @@ public class Main {
         userDaoJDBC.dropUsersTable();
         userDaoJDBC.getConnection().close();*/
 
-        UserDao userDaoHibernate = new UserDaoHibernateImpl();
+        UserDaoHibernateImpl userDaoHibernate = new UserDaoHibernateImpl();
         userDaoHibernate.createUsersTable();
         userDaoHibernate.saveUser("Vera", "Olegovna", (byte) 29);
         userDaoHibernate.saveUser("Serg", "Sergeevich", (byte) 34);
@@ -26,5 +25,7 @@ public class Main {
        System.out.println(userDaoHibernate.getAllUsers());
         userDaoHibernate.cleanUsersTable();
         userDaoHibernate.dropUsersTable();
+        userDaoHibernate.getSessionFactory().close();
+
     }
 }

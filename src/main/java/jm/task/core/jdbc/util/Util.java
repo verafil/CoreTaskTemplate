@@ -45,9 +45,9 @@ public class Util {
     }
 
     //HibernateUtil
-    private static SessionFactory sessionFactory;
+    SessionFactory sessionFactory;
 
-    public static SessionFactory getSessionFactory() {
+    public SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             Configuration configuration = new org.hibernate.cfg.Configuration();
 
