@@ -21,27 +21,24 @@ public class Util {
     private static final String PASSWORD = "root";
 
     public Connection getConnection() {
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException s) {
-            s.printStackTrace();
-        }
-
-        return connection;
-    }
-
-    public Util() {
-        try {
-            driver = new com.mysql.cj.jdbc.Driver();
-            DriverManager.registerDriver(driver);
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            if (!connection.isClosed()) {
-                System.out.println("Подключение открыто!");
+        if (connection == null) {
+            try {
+                driver = new com.mysql.cj.jdbc.Driver();
+                DriverManager.registerDriver(driver);
+                connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                if (!connection.isClosed()) {
+                    System.out.println("Подключение открыто!");
+                }
+            } catch (SQLException throwables) {
+                System.err.println("Не удалось загрузить класс драйвера!");
             }
-        } catch (SQLException throwables) {
-            System.err.println("Не удалось загрузить класс драйвера!");
+            try {
+                connection.setAutoCommit(false);
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
         }
-
+        return connection;
     }
 
     //HibernateUtil
@@ -61,8 +58,6 @@ public class Util {
             settings.put(Environment.SHOW_SQL, "true");
 
             settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-
-            //settings.put(Environment.HBM2DDL_AUTO, "create-drop");
 
             configuration.setProperties(settings);
 
