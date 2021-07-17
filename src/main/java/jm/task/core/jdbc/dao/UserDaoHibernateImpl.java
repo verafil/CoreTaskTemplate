@@ -65,7 +65,8 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             transaction = session.beginTransaction();
             session.save(new User(name, lastName, age));
             transaction.commit();
@@ -73,13 +74,17 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
     @Override
     public void removeUserById(long id) {
         Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             transaction = session.beginTransaction();
             session.delete(session.get(User.class, id));
             transaction.commit();
@@ -87,6 +92,9 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
@@ -98,7 +106,8 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
     @Override
     public void cleanUsersTable() {
         Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             transaction = session.beginTransaction();
             List list = sessionFactory.openSession().createQuery("From User").list();
             for (Object o : list) {
@@ -109,6 +118,9 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 }
