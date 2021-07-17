@@ -22,10 +22,9 @@ public class Main {
         userDaoHibernate.saveUser("Svetlana", "Ivanovna", (byte) 20);
         userDaoHibernate.saveUser("Igor", "Sergeevich", (byte) 28);
 
-       System.out.println(userDaoHibernate.getAllUsers());
+        System.out.println(userDaoHibernate.getAllUsers());
         userDaoHibernate.cleanUsersTable();
         userDaoHibernate.dropUsersTable();
         userDaoHibernate.getSessionFactory().close();
-
     }
 }

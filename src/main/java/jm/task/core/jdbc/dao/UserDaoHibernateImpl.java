@@ -25,27 +25,40 @@ public class UserDaoHibernateImpl extends Util implements UserDao {
                 "\tage int not null,\n" +
                 "\tconstraint users_pk\n" +
                 "\t\tprimary key (id)\n" + ")";
-        Transaction transaction;
-        try (Session session = sessionFactory.openSession()){
+        Transaction transaction = null;
+        Session session = sessionFactory.openSession();
+        try {
             transaction = session.beginTransaction();
             session.createSQLQuery(sql).executeUpdate();
             transaction.commit();
-        } catch (Exception s) {
+        } catch (Exception e) {
             System.err.println("Создание не возможно. Таблица с таким наименованием уже существует.");
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            assert session != null;
+            session.close();
         }
-
     }
 
     @Override
     public void dropUsersTable() {
         String sql = "drop table users";
-        Transaction transaction;
-        try (Session session = sessionFactory.openSession()) {
+        Transaction transaction = null;
+        Session session = sessionFactory.openSession();
+        try {
             transaction = session.beginTransaction();
             session.createSQLQuery(sql).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             System.err.println("Удаление не возможно. Таблица с таким наименованием не существует.");
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
